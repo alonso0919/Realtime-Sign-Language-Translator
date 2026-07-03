@@ -1,55 +1,58 @@
 # Sign Language to Text
 
-Proyecto que traduce lenguaje de señas a texto en tiempo real usando Python y Arduino
+Project that translates sign language to text in real time using Python and Arduino.
 
-Este sistema utiliza la cámara para detectar la mano interpreta la seña como una letra y la muestra en pantalla además la envía a un Arduino que despliega la información en una pantalla LCD y forma palabras automáticamente
+This system uses the camera to detect the hand, interprets the sign as a letter, and displays it on screen. It also sends the information to an Arduino, which displays it on an LCD screen and automatically forms words.
 
-Tecnologías utilizadas
+## Technologies Used
 
-Python con OpenCV MediaPipe y PySerial
-Arduino con comunicación serial y pantalla LCD I2C
+- Python with OpenCV, MediaPipe, and PySerial
+- Arduino with serial communication and I2C LCD screen
 
-Funcionamiento
+## How It Works
 
-La cámara detecta la mano usando MediaPipe
-Se analizan los puntos de la mano
-Se identifica qué dedos están doblados o extendidos
-Se compara con patrones para obtener una letra
-La letra se envía a Arduino
-Arduino muestra la letra y forma palabras automáticamente
-Si no hay nuevas letras en unos segundos se reinicia la palabra
+1. The camera detects the hand using MediaPipe
+2. The hand landmarks are analyzed
+3. It identifies which fingers are bent or extended
+4. This is compared against patterns to determine a letter
+5. The letter is sent to Arduino
+6. Arduino displays the letter and automatically forms words
+7. If no new letters are detected for a few seconds, the word resets
 
-Estructura del proyecto
+## Project Structure
 
-sign_to_text.py código principal en Python
-arduino.ino código para Arduino
-README.md documentación
+- `sign_to_text.py` — main Python code
+- `arduino.ino` — Arduino code
+- `README.md` — documentation
 
-Requisitos
+## Requirements
 
-Instalar en Python las librerías opencv python mediapipe pyserial
+Install the following Python libraries:
+- opencv-python
+- mediapipe
+- pyserial
 
-Se necesita Arduino compatible y pantalla LCD I2C
+A compatible Arduino board and I2C LCD screen are required.
 
-Uso
+## Usage
 
-Conectar el Arduino a la computadora
-Configurar el puerto en el archivo Python por ejemplo COM4
-Subir el código al Arduino
-Ejecutar el programa con python sign_to_text.py
-Presionar Q para salir
+1. Connect the Arduino to the computer
+2. Set the port in the Python file (e.g., `COM4`)
+3. Upload the code to the Arduino
+4. Run the program with `python sign_to_text.py`
+5. Press `Q` to quit
 
-Notas
+## Notes
 
-El sistema funciona con reglas no es un modelo de inteligencia artificial entrenado
-Funciona mejor con buena iluminación
-Detecta solo una mano
-Puede requerir ajustes dependiendo de la cámara
+- The system works based on rules, not a trained AI model
+- Works best with good lighting
+- Detects only one hand
+- May require adjustments depending on the camera
 
-Autor
+## Author
 
 Alonso Sanchez
 
-Licencia
+## License
 
-Uso educativo
+Educational use
