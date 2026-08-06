@@ -30,15 +30,16 @@ byte iconoMano[8] = {
 void setup() {
   Serial.begin(9600);
 
+  delay(500);                 // esperar a que el LCD estabilice su alimentación antes de inicializar
+
   // Inicializar LCD
   lcd.init();
   lcd.backlight();
+  lcd.clear();                // limpiar contenido residual de la RAM del LCD
   lcd.createChar(0, iconoMano);
 
   // Pantalla de bienvenida
-  lcd.setCursor(0, 0);
-  lcd.print("Lengua de señas");
-  lcd.setCursor(0, 1);
+  lcd.setCursor(4, 0);
   lcd.print("UNIPOLI");
   delay(2000);
 

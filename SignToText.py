@@ -1,14 +1,18 @@
 #librerias
+import sys
 import cv2
 import mediapipe as mp
 import serial
 import time
 import math
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 # Outputs
-PUERTO_ARDUINO = "COM4"       
+PUERTO_ARDUINO = "COM5"
 BAUD_RATE      = 9600
-CAMARA_INDEX   = 0           
+CAMARA_INDEX   = 1
 
 # Colores para OpenCV
 COLOR_FONDO    = (15, 15, 25)
@@ -152,7 +156,7 @@ def dibujar_ui(frame, letra, descripcion, confianza, fps):
 
 #LOOP PRINCIPAL 
 def main():
-    cap = cv2.VideoCapture(CAMARA_INDEX)
+    cap = cv2.VideoCapture(CAMARA_INDEX, cv2.CAP_DSHOW)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
