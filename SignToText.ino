@@ -1,54 +1,44 @@
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h>
-//#include <hd44780.h>
-//#include <hd44780ioClass/hd44780_I2Cexp.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-// CONFIGURACIÓN LCD 
-LiquidCrystal_I2C lcd(0x27, 16, 2);
-//LiquidCrystal_I2C lcd(0x3F, 16, 2);
+// CONFIGURACIÓN OLED (Steren ARD-384, SSD1306, 128x32, I2C)
+#define SCREEN_WIDTH   128
+#define SCREEN_HEIGHT  32
+#define OLED_RESET     -1
+#define SCREEN_ADDRESS 0x3C
+//#define SCREEN_ADDRESS 0x3D
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //VARIABLES
 String letraActual   = "";
 String letraAnterior = "";
 unsigned long tiempoUltima = 0;
-int contadorLetras = 0;           // para ir formando palabras
 String palabraActual = "";
-
-//CARACTERES PERSONALIZADOS (mano
-byte iconoMano[8] = {
-  0b00000,
-  0b01010,
-  0b11111,
-  0b11111,
-  0b01110,
-  0b00100,
-  0b00100,
-  0b00000
-};
 
 //SETUP
 void setup() {
   Serial.begin(9600);
 
-  delay(500);                 // esperar a que el LCD estabilice su alimentación antes de inicializar
+  delay(500);                 // esperar a que el OLED estabilice su alimentación antes de inicializar
 
-  // Inicializar LCD
-  lcd.init();
-  lcd.backlight();
-  lcd.clear();                // limpiar contenido residual de la RAM del LCD
-  lcd.createChar(0, iconoMano);
+  if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println("Error: no se encontro el OLED");
+    while (true) delay(1000);
+  }
+
+  display.clearDisplay();
+  display.setTextColor(SSD1306_WHITE);
 
   // Pantalla de bienvenida
-  lcd.setCursor(4, 0);
-  lcd.print("UNIPOLI");
+  display.setTextSize(2);
+  display.setCursor(10, 8);
+  display.print("UNIPOLI");
+  display.display();
   delay(2000);
 
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.write(0);               // ícono de mano
-  lcd.print(" Listo!");
-  lcd.setCursor(0, 1);
-  lcd.print("Muestra una sena");
+  pantallaListo();
 }
 
 //LOOP
@@ -78,39 +68,52 @@ void loop() {
   // Si pasan 3 segundos sin nueva letra, limpiar "palabra en progreso"
   if (millis() - tiempoUltima > 3000 && palabraActual.length() > 0) {
     // Mostrar la palabra completa formada
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Palabra:");
-    lcd.setCursor(0, 1);
-    lcd.print(palabraActual);
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setCursor(0, 0);
+    display.print("Palabra:");
+    display.setTextSize(2);
+    display.setCursor(0, 14);
+    display.print(palabraActual);
+    display.display();
     delay(2000);
 
     // Reiniciar
     palabraActual  = "";
     letraAnterior  = "";
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.write(0);
-    lcd.print(" Listo!");
-    lcd.setCursor(0, 1);
-    lcd.print("Muestra una sena");
+    pantallaListo();
   }
 }
 
-//FUNCIÓN: MOSTRAR EN LCD
+//FUNCIÓN: PANTALLA DE ESPERA
+void pantallaListo() {
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setCursor(0, 0);
+  display.print("Listo!");
+  display.setCursor(0, 12);
+  display.print("Muestra una sena");
+  display.display();
+}
+
+//FUNCIÓN: MOSTRAR EN OLED
 void mostrarLetra(String letra) {
-  lcd.clear();
+  display.clearDisplay();
 
-  // Fila superior: letra grande centrada (simulada con espacios)
-  lcd.setCursor(0, 0);
-  lcd.print("   LETRA:  ");
-  lcd.write(0);              // ícono mano
+  // Fila superior: etiqueta + letra grande
+  display.setTextSize(1);
+  display.setCursor(0, 0);
+  display.print("Letra:");
+  display.setTextSize(2);
+  display.setCursor(70, 0);
+  display.print(letra);
 
-  // Fila inferior: la letra detectada
-  lcd.setCursor(0, 1);
-  lcd.print("> ");
-  lcd.print(letra);
-  lcd.print("   [");
-  lcd.print(palabraActual);
-  lcd.print("]");
+  // Fila inferior: palabra en progreso
+  display.setTextSize(1);
+  display.setCursor(0, 22);
+  display.print("[");
+  display.print(palabraActual);
+  display.print("]");
+
+  display.display();
 }
